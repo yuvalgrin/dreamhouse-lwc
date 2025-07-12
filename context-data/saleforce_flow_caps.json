@@ -1,0 +1,301 @@
+[
+    {
+    "name": "start-record-triggered-flow",
+    "category": "Flow Start",
+    "object": "Any",
+    "trigger_event": "insert|update|delete",
+    "entry_conditions": [],
+    "actions": [
+    { "type": "start", "details": "Launch on DML event that meets entry criteria" }
+    ],
+    "implementation_type": "declarative",
+    "governor_limits": "Runs in transaction; 2 000 executed-element cap per interview",
+    "docs_ref": "https://help.salesforce.com/s/articleView?id=sf.flow_considerations_trigger_record.htm"
+    },
+    {
+    "name": "start-scheduled-triggered-flow",
+    "category": "Flow Start",
+    "object": "Any",
+    "trigger_event": "time",
+    "entry_conditions": [],
+    "actions": [
+    { "type": "start", "details": "Launch at defined date-time; optional record batch" }
+    ],
+    "implementation_type": "declarative",
+    "governor_limits": "Batch size 1-200 records; 250 000 interviews/day",
+    "docs_ref": "https://help.salesforce.com/s/articleView?id=sf.flow_considerations_trigger_schedule.htm"
+    },
+    {
+    "name": "start-autolaunched-flow",
+    "category": "Flow Start",
+    "object": "Any",
+    "trigger_event": "external",
+    "entry_conditions": [],
+    "actions": [
+    { "type": "start", "details": "Invoked by API, Apex, Subflow, Quick Action" }
+    ],
+    "implementation_type": "declarative",
+    "governor_limits": "Shares Apex per-tx limits; 50 MB heap",
+    "docs_ref": "https://help.salesforce.com/s/articleView?id=sf.ls_create_flow_action.htm"
+    },
+    {
+    "name": "get-records",
+    "category": "Flow Element",
+    "object": "Any",
+    "trigger_event": "N/A",
+    "entry_conditions": [],
+    "actions": [
+    { "type": "element", "details": "Query one or many records into variables" }
+    ],
+    "implementation_type": "declarative",
+    "governor_limits": "Counts toward 100 SOQL/tx; up to 50 000 rows returned",
+    "docs_ref": "https://help.salesforce.com/s/articleView?id=sf.flow_ref_elements_data_get.htm"
+    },
+    {
+    "name": "decision",
+    "category": "Flow Element",
+    "object": "Any",
+    "trigger_event": "N/A",
+    "entry_conditions": [],
+    "actions": [
+    { "type": "element", "details": "Branch logic by evaluating conditions" }
+    ],
+    "implementation_type": "declarative",
+    "governor_limits": "Each outcome counts toward 2 000 executed-element limit",
+    "docs_ref": "https://help.salesforce.com/s/articleView?id=sf.flow_ref_elements_decision.htm"
+    },
+    {
+    "name": "assignment",
+    "category": "Flow Element",
+    "object": "Any",
+    "trigger_event": "N/A",
+    "entry_conditions": [],
+    "actions": [
+    { "type": "element", "details": "Set or adjust variable values" }
+    ],
+    "implementation_type": "declarative",
+    "governor_limits": "No special limits; counts as one executed element",
+    "docs_ref": "https://help.salesforce.com/s/articleView?id=sf.flow_ref_elements_assignment.htm"
+    },
+    {
+    "name": "create-records",
+    "category": "Flow Element",
+    "object": "Any",
+    "trigger_event": "N/A",
+    "entry_conditions": [],
+    "actions": [
+    { "type": "element", "details": "Insert one or many records" }
+    ],
+    "implementation_type": "declarative",
+    "governor_limits": "Counts toward 150 DML/tx; all-or-none unless bulkified",
+    "docs_ref": "https://help.salesforce.com/s/articleView?id=sf.flow_ref_elements_data_create.htm"
+    },
+    {
+    "name": "update-records",
+    "category": "Flow Element",
+    "object": "Any",
+    "trigger_event": "N/A",
+    "entry_conditions": [],
+    "actions": [
+    { "type": "element", "details": "Modify existing records" }
+    ],
+    "implementation_type": "declarative",
+    "governor_limits": "Counts toward 150 DML/tx; 10 000 records per DML call",
+    "docs_ref": "https://help.salesforce.com/s/articleView?id=sf.flow_ref_elements_data_update.htm"
+    },
+    {
+    "name": "delete-records",
+    "category": "Flow Element",
+    "object": "Any",
+    "trigger_event": "N/A",
+    "entry_conditions": [],
+    "actions": [
+    { "type": "element", "details": "Delete one or many records" }
+    ],
+    "implementation_type": "declarative",
+    "governor_limits": "Counts toward 150 DML/tx; 10 000 records per DML call",
+    "docs_ref": "https://help.salesforce.com/s/articleView?id=sf.flow_ref_elements_data_delete.htm"
+    },
+    {
+    "name": "loop",
+    "category": "Flow Element",
+    "object": "Any",
+    "trigger_event": "N/A",
+    "entry_conditions": [],
+    "actions": [
+    { "type": "element", "details": "Iterate through collection items" }
+    ],
+    "implementation_type": "declarative",
+    "governor_limits": "Max 2 000 iterations per interview",
+    "docs_ref": "https://help.salesforce.com/s/articleView?id=sf.flow_ref_elements_loop.htm"
+    },
+    {
+    "name": "collection-sort",
+    "category": "Flow Element",
+    "object": "Any",
+    "trigger_event": "N/A",
+    "entry_conditions": [],
+    "actions": [
+    { "type": "element", "details": "Order collection and optionally limit items" }
+    ],
+    "implementation_type": "declarative",
+    "governor_limits": "No extra limits; heavy collections risk hitting element cap",
+    "docs_ref": "https://help.salesforce.com/s/articleView?id=sf.flow_ref_elements_sort.htm"
+    },
+    {
+    "name": "collection-filter",
+    "category": "Flow Element",
+    "object": "Any",
+    "trigger_event": "N/A",
+    "entry_conditions": [],
+    "actions": [
+    { "type": "element", "details": "Return subset of a collection that meets criteria" }
+    ],
+    "implementation_type": "declarative",
+    "governor_limits": "Element count applies; output collection is new variable",
+    "docs_ref": "https://help.salesforce.com/s/articleView?id=sf.flow_ref_elements_filter.htm"
+    },
+    {
+    "name": "subflow",
+    "category": "Flow Element",
+    "object": "Any",
+    "trigger_event": "N/A",
+    "entry_conditions": [],
+    "actions": [
+    { "type": "element", "details": "Invoke another active flow" }
+    ],
+    "implementation_type": "declarative",
+    "governor_limits": "Parent and child share transaction and 2 000 element cap",
+    "docs_ref": "https://help.salesforce.com/s/articleView?id=sf.flow_ref_elements_subflow.htm"
+    },
+    {
+    "name": "pause-wait",
+    "category": "Flow Element",
+    "object": "Any",
+    "trigger_event": "N/A",
+    "entry_conditions": [],
+    "actions": [
+    { "type": "element", "details": "Suspend interview until date, time, or criteria" }
+    ],
+    "implementation_type": "declarative",
+    "governor_limits": "Flow must be autolaunched; paused interviews count toward org limit (30 000)",
+    "docs_ref": "https://help.salesforce.com/s/articleView?id=sf.flow_ref_elements_pause.htm"
+    },
+    {
+    "name": "screen",
+    "category": "Flow Element",
+    "object": "Any",
+    "trigger_event": "N/A",
+    "entry_conditions": [],
+    "actions": [
+    { "type": "element", "details": "Collect or display data to user in screen flow" }
+    ],
+    "implementation_type": "declarative",
+    "governor_limits": "Screen flows run only in Lightning runtime; 50 components per screen",
+    "docs_ref": "https://help.salesforce.com/s/articleView?id=sf.flow_ref_elements_screen.htm"
+    },
+    {
+    "name": "quick-action",
+    "category": "Flow Action",
+    "object": "Any",
+    "trigger_event": "N/A",
+    "entry_conditions": [],
+    "actions": [
+    { "type": "action", "details": "Launch flow via Lightning quick action" }
+    ],
+    "implementation_type": "declarative",
+    "governor_limits": "Subject to page-layout action limits; flows share runtime limits",
+    "docs_ref": "https://help.salesforce.com/s/articleView?id=sf.admin_create_flow_action.htm"
+    },
+    {
+    "name": "apex-action",
+    "category": "Flow Action",
+    "object": "Any",
+    "trigger_event": "N/A",
+    "entry_conditions": [],
+    "actions": [
+    { "type": "action", "details": "Call invocable Apex class" }
+    ],
+    "implementation_type": "code",
+    "governor_limits": "Invocable Apex shares 6M CPU and Apex DML/SOQL caps",
+    "docs_ref": "https://help.salesforce.com/s/articleView?id=sf.flow_ref_elements_action.htm"
+    },
+    {
+    "name": "send-email-action",
+    "category": "Flow Action",
+    "object": "Any",
+    "trigger_event": "N/A",
+    "entry_conditions": [],
+    "actions": [
+    { "type": "action", "details": "Send and optionally log an email" }
+    ],
+    "implementation_type": "declarative",
+    "governor_limits": "Email limit: 5 000 single emails/day (Enterprise org default)",
+    "docs_ref": "https://help.salesforce.com/s/articleView?id=sf.flow_ref_elements_actions_sendemail.htm"
+    },
+    {
+    "name": "variable-resource",
+    "category": "Flow Resource",
+    "object": "N/A",
+    "trigger_event": "N/A",
+    "entry_conditions": [],
+    "actions": [
+    { "type": "resource", "details": "Holds single value or record" }
+    ],
+    "implementation_type": "declarative",
+    "governor_limits": "Subject to flow memory; 50 MB per interview",
+    "docs_ref": "https://help.salesforce.com/s/articleView?id=sf.flow_ref_resources_variable.htm"
+    },
+    {
+    "name": "constant-resource",
+    "category": "Flow Resource",
+    "object": "N/A",
+    "trigger_event": "N/A",
+    "entry_conditions": [],
+    "actions": [
+    { "type": "resource", "details": "Stores immutable value" }
+    ],
+    "implementation_type": "declarative",
+    "governor_limits": "No special limits",
+    "docs_ref": "https://help.salesforce.com/s/articleView?id=sf.flow_ref_resources_constant.htm"
+    },
+    {
+    "name": "formula-resource",
+    "category": "Flow Resource",
+    "object": "N/A",
+    "trigger_event": "N/A",
+    "entry_conditions": [],
+    "actions": [
+    { "type": "resource", "details": "Calculates value at runtime" }
+    ],
+    "implementation_type": "declarative",
+    "governor_limits": "Complex formulas may hit CPU limit; avoid heavy loops",
+    "docs_ref": "https://help.salesforce.com/s/articleView?id=sf.flow_ref_resources_formula.htm"
+    },
+    {
+    "name": "text-template-resource",
+    "category": "Flow Resource",
+    "object": "N/A",
+    "trigger_event": "N/A",
+    "entry_conditions": [],
+    "actions": [
+    { "type": "resource", "details": "Stores rich or plain text with merge fields" }
+    ],
+    "implementation_type": "declarative",
+    "governor_limits": "Template size ≤32 kB; counts toward interview heap",
+    "docs_ref": "https://help.salesforce.com/s/articleView?id=sf.flow_ref_resources_texttemplate.htm"
+    },
+    {
+    "name": "choice-resource",
+    "category": "Flow Resource",
+    "object": "N/A",
+    "trigger_event": "N/A",
+    "entry_conditions": [],
+    "actions": [
+    { "type": "resource", "details": "Defines selectable option for screen components" }
+    ],
+    "implementation_type": "declarative",
+    "governor_limits": "Up to 50 choices per component; validated at runtime",
+    "docs_ref": "https://help.salesforce.com/s/articleView?id=sf.flow_ref_resources_choice.htm"
+    }
+]
