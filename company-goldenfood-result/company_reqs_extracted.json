@@ -1,0 +1,10 @@
+{
+  "raw_requirements": [
+    "Right now leads pour in from trade shows, our website, social media, referrals, and outbound calls, but spreadsheets are killing our follow‐up speed.",
+    "Typical lead fields I log: product interest, estimated monthly volume in pounds, region, and preferred contact method.",
+    "Our sales pipeline mirrors Salesforce defaults—Qualification, Proposal/Price Quote, Negotiation/Review, and Closed Won.",
+    "Any quote with a discount above 15 % needs my sign-off, so I'd like an automated approval step for that.",
+    "Every new opportunity should auto-create two tasks: send a sample pack within three days and schedule a pricing call within ten.",
+    "Please be sure email replies log back to Salesforce so we can keep response times under 24 hours."
+  ]
+} 

@@ -1,0 +1,54 @@
+{
+  "user_story": {
+    "title": "Automated Lead Management and Sales Process Optimization",
+    "actor": "Sales Manager",
+    "trigger": "New lead creation from multiple sources (trade shows, website, social media, referrals, outbound calls)",
+    "current_pain_point": "Manual spreadsheet management is slowing down follow-up speed and response times",
+    "desired_outcome": "Automated lead processing with integrated task creation, approval workflows, and email tracking to maintain 24-hour response times",
+    "process_requirements": [
+      {
+        "step": "Lead Capture",
+        "description": "Capture leads from multiple sources with standard fields: product interest, estimated monthly volume (pounds), region, preferred contact method",
+        "automation_needed": "Auto-create lead records from various entry points"
+      },
+      {
+        "step": "Sales Pipeline Management",
+        "description": "Follow standard Salesforce pipeline stages: Qualification, Proposal/Price Quote, Negotiation/Review, Closed Won",
+        "automation_needed": "Standard opportunity stage progression"
+      },
+      {
+        "step": "Quote Approval Process",
+        "description": "Automated approval workflow for quotes with discounts above 15%, routing to the regional sales manager for sign-off",
+        "automation_needed": "Conditional approval routing based on discount percentage to regional sales manager"
+      },
+      {
+        "step": "Opportunity Task Automation",
+        "description": "Auto-create two tasks for every new opportunity: send sample pack (within 3 days) and schedule pricing call (within 10 days)",
+        "automation_needed": "Task creation with specific due dates based on opportunity creation"
+      },
+      {
+        "step": "Email Tracking",
+        "description": "Ensure email replies log back to Salesforce to maintain response times under 24 hours",
+        "automation_needed": "Email-to-case or similar integration for tracking communications"
+      }
+    ],
+    "success_criteria": [
+      "Lead follow-up speed improved by eliminating spreadsheet dependency",
+      "All quotes with >15% discount automatically routed to the regional sales manager for approval",
+      "Every new opportunity has sample pack and pricing call tasks created automatically",
+      "Email response times maintained under 24 hours through Salesforce tracking"
+    ],
+    "systems_involved": [
+      "Salesforce CRM",
+      "Email system (for tracking replies)",
+      "Lead sources (trade shows, website, social media, referrals, outbound calls)"
+    ]
+  },
+  "questions_for_user": [
+    "For the sample pack task - should this be assigned to a specific role (like sales rep) or to the opportunity owner?",
+    "For the pricing call task - should this be assigned to the same person as the sample pack task, or to a different role?",
+    "When you mention 'email replies log back to Salesforce' - do you want this to create cases, log activities on the lead/opportunity, or both?",
+    "Are there any specific conditions when leads should NOT auto-create opportunities (e.g., certain regions, product types, or volume thresholds)?",
+    "Should the 3-day and 10-day task deadlines be business days or calendar days?"
+  ]
+} 

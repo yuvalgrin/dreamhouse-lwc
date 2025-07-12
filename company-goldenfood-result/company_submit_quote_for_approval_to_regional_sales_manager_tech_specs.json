@@ -1,0 +1,25 @@
+{
+  "selected_step": "Submit Quote for Approval to Regional Sales Manager",
+  "implementation": {
+    "automation_type": "Record-Triggered Flow",
+    "object": "Quote",
+    "trigger_event": "create or update",
+    "entry_criteria": [
+      { "field": "DiscountPercentage", "operator": "gt", "value": 15 }
+    ],
+    "actions": [
+      { "type": "submit-for-approval", "details": "Automatically submit the Quote to the 'Regional Sales Manager Discount Approval' approval process." }
+    ],
+    "permissions_notes": "Flow runs in system context but submission action requires user permission to 'Submit for Approval'. Ensure Regional Sales Manager has 'Approve Records' permission and Quote visibility.",
+    "naming_conventions": {
+      "flow_name": "QUOTE_Discount_AutoSubmit_RTF",
+      "variables_prefix": "quoDiscAppr"
+    }
+  },
+  "requires_code": "no",
+  "governor_limits": "Flow interview ≤1 MB heap; 1 DML operation for status update and 1 Action element; counts toward 2 000 executed-element cap; no SOQL/DML limits exceeded.",
+  "test_scenarios": [
+    "Create a Quote with 18% discount → Flow fires, Quote is submitted to approval, approval request created for Regional Sales Manager.",
+    "Update an existing Quote with 12% discount to 20% → Flow fires, approval request created. Update Quote from 20% to 10% → no new approval submission."
+  ]
+} 

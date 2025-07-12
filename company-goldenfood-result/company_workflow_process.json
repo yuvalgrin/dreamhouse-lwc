@@ -1,0 +1,89 @@
+{
+  "upn_diagram": {
+    "structured_upn_json": {
+      "steps": [
+        {
+          "id": "A",
+          "type": "Record Event",
+          "label": "Lead Created",
+          "actor": "System",
+          "system": "Salesforce",
+          "next_step_ids": ["B"]
+        },
+        {
+          "id": "B",
+          "type": "Check",
+          "label": "Is Estimated Volume ≤ Avg Threshold?",
+          "actor": "System",
+          "system": "Salesforce",
+          "condition": "Lead.Estimated_Monthly_Volume__c <= AVG_THRESHOLD",
+          "next_step_ids": ["C", "J"]
+        },
+        {
+          "id": "C",
+          "type": "Do",
+          "label": "Create Opportunity with Standard Stages",
+          "actor": "System",
+          "system": "Salesforce",
+          "next_step_ids": ["D"]
+        },
+        {
+          "id": "D",
+          "type": "Do",
+          "label": "Create Task: Send Sample Pack (3 Business Days)",
+          "actor": "System",
+          "system": "Salesforce",
+          "next_step_ids": ["E"]
+        },
+        {
+          "id": "E",
+          "type": "Do",
+          "label": "Create Task: Schedule Pricing Call (10 Business Days)",
+          "actor": "System",
+          "system": "Salesforce",
+          "next_step_ids": ["F"]
+        },
+        {
+          "id": "F",
+          "type": "Record Event",
+          "label": "Quote Created",
+          "actor": "System",
+          "system": "Salesforce",
+          "next_step_ids": ["G"]
+        },
+        {
+          "id": "G",
+          "type": "Check",
+          "label": "Is Discount > 15%?",
+          "actor": "System",
+          "system": "Salesforce",
+          "condition": "Quote.DiscountPercentage > 15",
+          "next_step_ids": ["H", "I"]
+        },
+        {
+          "id": "H",
+          "type": "Route",
+          "label": "Submit Quote for Approval to Regional Sales Manager",
+          "actor": "System",
+          "system": "Salesforce",
+          "next_step_ids": ["I"]
+        },
+        {
+          "id": "I",
+          "type": "End",
+          "label": "End Process",
+          "actor": "System",
+          "system": "Salesforce"
+        },
+        {
+          "id": "J",
+          "type": "End",
+          "label": "No Opportunity Auto-Creation",
+          "actor": "System",
+          "system": "Salesforce"
+        }
+      ]
+    },
+    "mermaid_diagram": "flowchart TD\n  A[Lead Created] --> B{Is Estimated Volume ≤ Avg Threshold?}\n  B -- Yes --> C[Create Opportunity]\n  B -- No --> J[End - No Opportunity Auto-Creation]\n  C --> D[Create Task: Send Sample Pack (3 BD)]\n  D --> E[Create Task: Schedule Pricing Call (10 BD)]\n  E --> F[Quote Created]\n  F --> G{Is Discount > 15%?}\n  G -- Yes --> H[Submit Quote for Approval]\n  G -- No --> I[End Process]\n  H --> I"
+  }
+} 
