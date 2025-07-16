@@ -1,0 +1,21 @@
+flowchart TD
+  A[New Lead Created]
+  B[Create Tasks for Opportunity]
+  C[Wait 3 Days to Send Sample Pack]
+  D[Send Sample Pack]
+  E[Wait 10 Days to Schedule Pricing Call]
+  F[Schedule Pricing Call]
+  G{Is Discount Above 15%?}
+  H[Notify Manager for Approval]
+  I[Log Email Replies]
+  J[End Process]
+  A --> B
+  B --> C
+  C --> D
+  D --> E
+  E --> F
+  F --> G
+  G --> H
+  G --> I
+  H --> J
+  I --> J

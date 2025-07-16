@@ -1,0 +1,21 @@
+{
+ "selected_step": "Schedule Pricing Call",
+ "implementation": {
+   "automation_type": "Record-Triggered Flow",
+   "object": "Opportunity",
+   "trigger_event": "update",
+   "entry_criteria": [ { "field": "StageName", "operator": "equals", "value": "Negotiation/Review" } ],
+   "actions": [ { "type": "create-records", "details": "Create a task to schedule the pricing call" } ],
+   "permissions_notes": "Flow runs in system context without sharing, ensuring access to all records.",
+   "naming_conventions": {
+     "flow_name": "OPP_Schedule_Pricing_Call_F",
+     "variables_prefix": "oppScheduleCall"
+   }
+ },
+ "requires_code": "no",
+ "governor_limits": "Flow interview ≤1 MB; combined DML ≤150 per tx.",
+ "test_scenarios": [
+   "Update opportunity stage to 'Negotiation/Review' → task created for scheduling a pricing call.",
+   "Update opportunity stage to 'Closed Won' → no task created."
+ ]
+}

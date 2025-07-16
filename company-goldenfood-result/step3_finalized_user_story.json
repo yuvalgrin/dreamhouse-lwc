@@ -1,0 +1,48 @@
+{
+  "user_story": {
+    "intent_and_frequency": {
+      "frequency": "Recurring"
+    },
+    "trigger": {
+      "event": "New leads are created from various sources"
+    },
+    "actions_and_responsibilities": {
+      "actions": [
+        "Auto-create two tasks for each new opportunity: send a sample pack and schedule a pricing call",
+        "Log email replies back to Salesforce",
+        "Automated approval step for quotes with discounts above 15%"
+      ],
+      "responsible": [
+        "Sales team for sending sample packs and scheduling calls",
+        "System for logging email replies",
+        "Manager for approving quotes"
+      ]
+    },
+    "systems_and_data": {
+      "fields": [
+        "Lead source (trade shows, website, social media, referrals, outbound calls)",
+        "Opportunity details (including discount percentage)"
+      ],
+      "systems": [
+        "Salesforce"
+      ]
+    },
+    "decisions_and_logic": {
+      "conditions": [
+        "If a quote has a discount above 15%, it requires approval"
+      ]
+    },
+    "timing_and_waits": {
+      "waits": [
+        "Send sample pack within three days",
+        "Schedule pricing call within ten days"
+      ]
+    },
+    "edge_cases_and_exceptions": {
+      "fallbacks": [
+        "If the process fails to log email replies, notify the sales team"
+      ]
+    }
+  },
+  "questions_for_user": []
+}

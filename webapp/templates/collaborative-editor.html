@@ -1,0 +1,904 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Workflow Analysis - Collaborative Editor</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            color: #1e293b;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .app-container {
+            display: flex;
+            height: 100vh;
+        }
+
+        /* Left Sidebar - Navigation */
+        .sidebar {
+            width: 280px;
+            background: white;
+            border-right: 1px solid #e2e8f0;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        .sidebar-header {
+            padding: 24px 20px;
+            border-bottom: 1px solid #e2e8f0;
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            color: white;
+        }
+
+        .sidebar-header h2 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 4px;
+        }
+
+        .sidebar-header p {
+            font-size: 0.875rem;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .nav-sections {
+            flex: 1;
+            padding: 20px 0;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 20px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border-left: 3px solid transparent;
+        }
+
+        .nav-item:hover {
+            background: #f8fafc;
+        }
+
+        .nav-item.active {
+            background: #f0f9ff;
+            border-left-color: #3b82f6;
+        }
+
+        .nav-item.completed {
+            border-left-color: #10b981;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 12px;
+            flex-shrink: 0;
+        }
+
+        .status-dot.completed {
+            background: #10b981;
+        }
+
+        .status-dot.active {
+            background: #3b82f6;
+        }
+
+        .status-dot.pending {
+            background: #cbd5e1;
+        }
+
+        .nav-item.active .status-dot {
+            background: #3b82f6;
+        }
+
+        .nav-item.completed .status-dot {
+            background: #10b981;
+        }
+
+        .nav-text {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #64748b;
+        }
+
+        .nav-item.active .nav-text {
+            color: #1e293b;
+            font-weight: 600;
+        }
+
+        .recent-activity {
+            padding: 20px;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .recent-activity h3 {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #64748b;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .activity-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+            font-size: 0.75rem;
+            color: #64748b;
+        }
+
+        .activity-avatar {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            margin-right: 8px;
+            background: #3b82f6;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.625rem;
+            color: white;
+        }
+
+        /* Main Document Area */
+        .main-content {
+            flex: 1;
+            background: #f8fafc;
+            overflow-y: auto;
+            padding: 40px;
+        }
+
+        .document-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        /* Input Section */
+        .input-section {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 32px;
+            margin-bottom: 32px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        .input-section h3 {
+            color: #1e293b;
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #374151;
+            font-size: 0.875rem;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 16px 20px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.2s ease;
+            font-family: inherit;
+            background: white;
+            color: #1f2937;
+            line-height: 1.6;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .form-control::placeholder {
+            color: #9ca3af;
+        }
+
+        textarea.form-control {
+            min-height: 200px;
+            resize: vertical;
+            font-size: 1rem;
+            line-height: 1.7;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-family: inherit;
+        }
+
+        .btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 10px 15px -3px rgba(59, 130, 246, 0.3);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
+        }
+
+        .preset-examples {
+            margin: 24px 0;
+            padding: 20px;
+            background: #f8fafc;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .preset-examples h4 {
+            color: #374151;
+            margin-bottom: 16px;
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+
+        .preset-buttons {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .preset-btn {
+            flex: 1;
+            min-width: 200px;
+            padding: 10px 16px;
+            font-size: 0.875rem;
+        }
+
+        /* Loading Section */
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 40px;
+        }
+
+        .spinner {
+            border: 3px solid #e5e7eb;
+            border-top: 3px solid #3b82f6;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Results Section */
+        .result-section {
+            display: none;
+        }
+
+        .document-section {
+            margin-bottom: 40px;
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 32px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        .section-number {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #3b82f6;
+            margin-bottom: 16px;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 16px;
+        }
+
+        .section-content {
+            font-size: 1rem;
+            line-height: 1.7;
+            color: #374151;
+        }
+
+        .user-story-content {
+            background: #f8fafc;
+            border-radius: 8px;
+            padding: 20px;
+            border-left: 4px solid #3b82f6;
+            font-family: 'SF Mono', 'Monaco', 'Inconsolata', monospace;
+            font-size: 0.875rem;
+            color: #374151;
+        }
+
+        .questions-section {
+            margin-top: 30px;
+        }
+
+        .questions-section h3 {
+            color: #1e293b;
+            margin-bottom: 16px;
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        .question-item {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 16px;
+        }
+
+        .question-item h4 {
+            color: #3b82f6;
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .question-item input, .question-item textarea {
+            background: white;
+            border: 1px solid #d1d5db;
+            color: #374151;
+            padding: 10px 12px;
+            border-radius: 6px;
+            width: 100%;
+            font-family: inherit;
+        }
+
+        .diagram-section {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .diagram-section h3 {
+            color: #1e293b;
+            margin-bottom: 20px;
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        .diagram-container {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 32px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        .diagram-container img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+        }
+
+        .tech-spec-section {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 24px;
+            margin-top: 30px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        .tech-spec-section h3 {
+            color: #3b82f6;
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .tech-spec-content {
+            background: #f8fafc;
+            border-radius: 8px;
+            padding: 20px;
+            border-left: 4px solid #3b82f6;
+            font-family: 'SF Mono', 'Monaco', 'Inconsolata', monospace;
+            font-size: 0.875rem;
+            color: #374151;
+        }
+
+        .alert {
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-family: inherit;
+        }
+
+        .alert-success {
+            background: #d1fae5;
+            border: 1px solid #10b981;
+            color: #065f46;
+        }
+
+        .alert-error {
+            background: #fee2e2;
+            border: 1px solid #ef4444;
+            color: #991b1b;
+        }
+
+        .alert-info {
+            background: #dbeafe;
+            border: 1px solid #3b82f6;
+            color: #1e40af;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        /* Right Collaboration Panel */
+        .collaboration-panel {
+            width: 320px;
+            background: white;
+            border-left: 1px solid #e2e8f0;
+            display: flex;
+            flex-direction: column;
+            box-shadow: -4px 0 6px -1px rgba(0, 0, 0, 0.1), -2px 0 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        .chat-header {
+            padding: 20px;
+            border-bottom: 1px solid #e2e8f0;
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            color: white;
+        }
+
+        .chat-header h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 4px;
+        }
+
+        .chat-header p {
+            font-size: 0.875rem;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .message {
+            margin-bottom: 20px;
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .message-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .message-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            margin-right: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: white;
+        }
+
+        .message-avatar.ai {
+            background: #10b981;
+        }
+
+        .message-avatar.human {
+            background: #8b5cf6;
+        }
+
+        .message-info {
+            flex: 1;
+        }
+
+        .message-author {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .message-time {
+            font-size: 0.75rem;
+            color: #888;
+        }
+
+        .message-bubble {
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 16px;
+            margin-left: 44px;
+            border: 1px solid #e2e8f0;
+            position: relative;
+        }
+
+        .message-bubble::before {
+            content: "";
+            position: absolute;
+            left: -6px;
+            top: 12px;
+            width: 0;
+            height: 0;
+            border-top: 6px solid transparent;
+            border-bottom: 6px solid transparent;
+            border-right: 6px solid #f8fafc;
+        }
+
+        .message-bubble.new {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.2);
+        }
+
+        .message-text {
+            font-size: 0.875rem;
+            line-height: 1.5;
+            color: #374151;
+        }
+
+        .message-text strong {
+            color: #3b82f6;
+        }
+
+        .message-text .code {
+            font-family: 'SF Mono', 'Monaco', 'Inconsolata', monospace;
+            background: #e2e8f0;
+            padding: 2px 4px;
+            border-radius: 3px;
+            color: #dc2626;
+        }
+
+        /* Scrollbar Styling */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 3px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+
+        /* Mermaid diagram styling */
+        .mermaid {
+            background: white;
+            padding: 24px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1200px) {
+            .collaboration-panel {
+                width: 280px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .app-container {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                height: auto;
+                max-height: 200px;
+            }
+            
+            .collaboration-panel {
+                width: 100%;
+                height: 300px;
+            }
+            
+            .main-content {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Left Sidebar - Navigation -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <h2>Workflow Analysis</h2>
+                <p>Collaborative Document Editor</p>
+            </div>
+            
+            <div class="nav-sections">
+                <div class="nav-item active" data-section="input">
+                    <div class="status-dot active"></div>
+                    <span class="nav-text">Input Requirements</span>
+                </div>
+                <div class="nav-item" data-section="user-story">
+                    <div class="status-dot pending"></div>
+                    <span class="nav-text">User Story</span>
+                </div>
+                <div class="nav-item" data-section="questions">
+                    <div class="status-dot pending"></div>
+                    <span class="nav-text">Clarification</span>
+                </div>
+                <div class="nav-item" data-section="diagram">
+                    <div class="status-dot pending"></div>
+                    <span class="nav-text">Workflow Diagram</span>
+                </div>
+                <div class="nav-item" data-section="tech-spec">
+                    <div class="status-dot pending"></div>
+                    <span class="nav-text">Technical Spec</span>
+                </div>
+            </div>
+            
+            <div class="recent-activity">
+                <h3>Recent Activity</h3>
+                <div class="activity-item">
+                    <div class="activity-avatar">AI</div>
+                    <span>AI analyzing requirements</span>
+                </div>
+                <div class="activity-item">
+                    <div class="activity-avatar">JS</div>
+                    <span>John started new analysis</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Document Area -->
+        <div class="main-content">
+            <div class="document-container">
+                <!-- Input Section -->
+                <div id="inputSection" class="input-section">
+                    <h3><i class="fas fa-edit"></i> Describe your business process</h3>
+                    <div class="form-group">
+                        <label for="userInput">Business Process Description:</label>
+                        <textarea 
+                            id="userInput" 
+                            class="form-control" 
+                            placeholder="Example: When a sales representative creates a new opportunity with an amount greater than $100,000, the system should automatically send an email notification to the regional sales manager and create an approval record..."
+                        ></textarea>
+                    </div>
+                    
+                    <!-- Preset Examples Section -->
+                    <div class="preset-examples">
+                        <h4><i class="fas fa-lightbulb"></i> Try these examples:</h4>
+                        <div class="preset-buttons">
+                            <button class="btn btn-secondary preset-btn" data-preset="goldenfoods">
+                                <i class="fas fa-dog"></i> GoldenFoods Pet Supply
+                            </button>
+                            <button class="btn btn-secondary preset-btn" data-preset="techstartup">
+                                <i class="fas fa-rocket"></i> Tech Startup CRM
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <button id="analyzeBtn" class="btn">
+                        <i class="fas fa-play"></i> Start Analysis
+                    </button>
+                </div>
+
+                <!-- Loading Section -->
+                <div id="loadingSection" class="loading">
+                    <div class="spinner"></div>
+                    <p>Analyzing your requirements and generating user story...</p>
+                </div>
+
+                <!-- Results Section -->
+                <div id="resultsSection" class="result-section">
+                    <!-- User Story Display -->
+                    <div id="userStorySection" class="document-section hidden">
+                        <div class="section-number">1.</div>
+                        <div class="section-title">Generated User Story</div>
+                        <div id="userStoryContent" class="user-story-content"></div>
+                    </div>
+
+                    <!-- Questions Section -->
+                    <div id="questionsSection" class="document-section hidden">
+                        <div class="section-number">2.</div>
+                        <div class="section-title">Clarification Questions</div>
+                        <p>Please answer the following questions to help us better understand your process:</p>
+                        <div id="questionsList"></div>
+                        <button id="submitAnswersBtn" class="btn">
+                            <i class="fas fa-paper-plane"></i> Submit Answers
+                        </button>
+                    </div>
+
+                    <!-- Diagram Section -->
+                    <div id="diagramSection" class="document-section hidden">
+                        <div class="section-number">3.</div>
+                        <div class="section-title">Workflow Diagram</div>
+                        <div id="diagramContainer" class="diagram-container">
+                            <div id="mermaidDiagram" class="mermaid"></div>
+                        </div>
+                    </div>
+
+                    <!-- Technical Specification Section -->
+                    <div id="techSpecSection" class="document-section hidden">
+                        <div class="section-number">4.</div>
+                        <div class="section-title">Technical Specification</div>
+                        <div id="techSpecContent" class="tech-spec-content"></div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div id="actionButtons" class="hidden" style="text-align: center; margin-top: 30px;">
+                        <button id="generateDiagramBtn" class="btn">
+                            <i class="fas fa-magic"></i> Generate Diagram
+                        </button>
+                        <button id="newAnalysisBtn" class="btn btn-secondary">
+                            <i class="fas fa-plus"></i> Start New Analysis
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Collaboration Panel -->
+        <div class="collaboration-panel">
+            <div class="chat-header">
+                <h3>AI Assistant</h3>
+                <p>Real-time guidance and suggestions</p>
+            </div>
+            
+            <div class="chat-messages">
+                <div class="message">
+                    <div class="message-header">
+                        <div class="message-avatar ai">AI</div>
+                        <div class="message-info">
+                            <div class="message-author">AI Assistant</div>
+                            <div class="message-time">Just now</div>
+                        </div>
+                    </div>
+                    <div class="message-bubble new">
+                        <div class="message-text">
+                            Welcome! I'm here to help you create detailed workflow diagrams. Start by describing your business process in the input area, and I'll guide you through each step.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="message">
+                    <div class="message-header">
+                        <div class="message-avatar ai">AI</div>
+                        <div class="message-info">
+                            <div class="message-author">AI Assistant</div>
+                            <div class="message-time">1 minute ago</div>
+                        </div>
+                    </div>
+                    <div class="message-bubble">
+                        <div class="message-text">
+                            You can also try the preset examples to see how the system works with real business scenarios.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="static/app.js"></script>
+    <script>
+        // Initialize Mermaid
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'default',
+            themeVariables: {
+                darkMode: false,
+                background: '#ffffff',
+                primaryColor: '#3b82f6',
+                primaryTextColor: '#1e293b',
+                primaryBorderColor: '#3b82f6',
+                lineColor: '#e2e8f0',
+                secondaryColor: '#f8fafc',
+                tertiaryColor: '#f1f5f9'
+            }
+        });
+
+        // Navigation functionality
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.addEventListener('click', function() {
+                const section = this.dataset.section;
+                
+                // Update navigation
+                document.querySelectorAll('.nav-item').forEach(nav => {
+                    nav.classList.remove('active');
+                });
+                this.classList.add('active');
+                
+                // Scroll to section
+                if (section === 'input') {
+                    document.getElementById('inputSection').scrollIntoView({ behavior: 'smooth' });
+                } else if (section === 'user-story' && !document.getElementById('userStorySection').classList.contains('hidden')) {
+                    document.getElementById('userStorySection').scrollIntoView({ behavior: 'smooth' });
+                } else if (section === 'questions' && !document.getElementById('questionsSection').classList.contains('hidden')) {
+                    document.getElementById('questionsSection').scrollIntoView({ behavior: 'smooth' });
+                } else if (section === 'diagram' && !document.getElementById('diagramSection').classList.contains('hidden')) {
+                    document.getElementById('diagramSection').scrollIntoView({ behavior: 'smooth' });
+                } else if (section === 'tech-spec' && !document.getElementById('techSpecSection').classList.contains('hidden')) {
+                    document.getElementById('techSpecSection').scrollIntoView({ behavior: 'smooth' });
+                }
+            });
+        });
+
+        // Add some subtle animations
+        document.addEventListener('DOMContentLoaded', function() {
+            // Fade in the input section
+            const inputSection = document.getElementById('inputSection');
+            inputSection.style.opacity = '0';
+            inputSection.style.transform = 'translateY(20px)';
+            
+            setTimeout(() => {
+                inputSection.style.transition = 'all 0.5s ease';
+                inputSection.style.opacity = '1';
+                inputSection.style.transform = 'translateY(0)';
+            }, 200);
+        });
+    </script>
+</body>
+</html> 

@@ -1,0 +1,1 @@
+# This file is now obsolete. All LLM calls are handled directly in main.py using the OpenAI SDK for Azure. 

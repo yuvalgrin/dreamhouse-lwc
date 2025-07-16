@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Workflow Analysis Tool</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            min-height: 100vh;
+            color: #1e293b;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            color: #0f172a;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            color: #64748b;
+            font-weight: 400;
+        }
+
+        .main-card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            overflow: hidden;
+            margin-bottom: 30px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .card-header {
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            color: white;
+            padding: 32px;
+            text-align: center;
+        }
+
+        .card-header h2 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .card-header p {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1rem;
+        }
+
+        .card-content {
+            padding: 40px;
+        }
+
+        .input-section {
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 12px;
+            font-weight: 600;
+            color: #1e293b;
+            font-size: 1rem;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 16px 20px;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            font-size: 1.125rem;
+            transition: all 0.2s ease;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: white;
+            color: #1f2937;
+            line-height: 1.6;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+        }
+
+        .form-control::placeholder {
+            color: #9ca3af;
+            font-weight: 400;
+        }
+
+        textarea.form-control {
+            min-height: 200px;
+            resize: vertical;
+            font-size: 1.1rem;
+            line-height: 1.7;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-family: inherit;
+        }
+
+        .btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
+        }
+
+        .btn-secondary:hover {
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+
+        .preset-examples {
+            margin: 24px 0;
+            padding: 24px;
+            background: #f8fafc;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .preset-examples h4 {
+            color: #374151;
+            margin-bottom: 16px;
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+
+        .preset-buttons {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .preset-btn {
+            flex: 1;
+            min-width: 200px;
+            padding: 10px 16px;
+            font-size: 0.875rem;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 40px;
+        }
+
+        .spinner {
+            border: 3px solid #e5e7eb;
+            border-top: 3px solid #3b82f6;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .result-section {
+            display: none;
+            margin-top: 30px;
+        }
+
+        .user-story-card {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+
+        .user-story-card h3 {
+            color: #1e293b;
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .user-story-content {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            border-left: 4px solid #3b82f6;
+            font-family: 'SF Mono', 'Monaco', 'Inconsolata', monospace;
+            font-size: 0.875rem;
+            color: #374151;
+        }
+
+        .questions-section {
+            margin-top: 30px;
+        }
+
+        .questions-section h3 {
+            color: #1e293b;
+            margin-bottom: 16px;
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        .question-item {
+            background: #fef3c7;
+            border: 1px solid #f59e0b;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 16px;
+        }
+
+        .question-item h4 {
+            color: #92400e;
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .question-item input, .question-item textarea {
+            background: white;
+            border: 1px solid #d1d5db;
+            color: #374151;
+            padding: 10px 12px;
+            border-radius: 6px;
+            width: 100%;
+            font-family: inherit;
+        }
+
+        .diagram-section {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .diagram-section h3 {
+            color: #1e293b;
+            margin-bottom: 20px;
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        .diagram-container {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 32px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        .diagram-container img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+        }
+
+        .tech-spec-section {
+            background: #f0f9ff;
+            border: 1px solid #0ea5e9;
+            border-radius: 12px;
+            padding: 24px;
+            margin-top: 30px;
+        }
+
+        .tech-spec-section h3 {
+            color: #0c4a6e;
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .tech-spec-content {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            border-left: 4px solid #0ea5e9;
+            font-family: 'SF Mono', 'Monaco', 'Inconsolata', monospace;
+            font-size: 0.875rem;
+            color: #374151;
+        }
+
+        .alert {
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-family: inherit;
+        }
+
+        .alert-success {
+            background: #d1fae5;
+            border: 1px solid #10b981;
+            color: #065f46;
+        }
+
+        .alert-error {
+            background: #fee2e2;
+            border: 1px solid #ef4444;
+            color: #991b1b;
+        }
+
+        .alert-info {
+            background: #dbeafe;
+            border: 1px solid #3b82f6;
+            color: #1e40af;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .step-indicator {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 32px;
+            gap: 24px;
+        }
+
+        .step {
+            display: flex;
+            align-items: center;
+            color: #6b7280;
+            font-weight: 500;
+        }
+
+        .step-number {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #f3f4f6;
+            color: #6b7280;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            margin-right: 12px;
+            border: 2px solid #e5e7eb;
+            transition: all 0.2s ease;
+        }
+
+        .step.active .step-number {
+            background: #3b82f6;
+            color: white;
+            border-color: #3b82f6;
+        }
+
+        .step.active {
+            color: #3b82f6;
+        }
+
+        .step.completed .step-number {
+            background: #10b981;
+            color: white;
+            border-color: #10b981;
+        }
+
+        .step.completed {
+            color: #10b981;
+        }
+
+        /* Modern scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+
+        /* Mermaid diagram styling */
+        .mermaid {
+            background: white;
+            padding: 24px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 16px;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .card-content {
+                padding: 24px;
+            }
+            
+            .step-indicator {
+                flex-direction: column;
+                gap: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-project-diagram"></i> Workflow Analysis Tool</h1>
+            <p>Transform your business requirements into Salesforce workflow diagrams</p>
+        </div>
+
+        <div class="main-card">
+            <div class="card-header">
+                <h2>Workflow Analysis Process</h2>
+                <p>Describe your business process and we'll generate a detailed workflow diagram</p>
+            </div>
+            
+            <div class="card-content">
+                <!-- Step Indicator -->
+                <div class="step-indicator">
+                    <div class="step active" id="step1">
+                        <div class="step-number">1</div>
+                        <span>Input Requirements</span>
+                    </div>
+                    <div class="step" id="step2">
+                        <div class="step-number">2</div>
+                        <span>User Story</span>
+                    </div>
+                    <div class="step" id="step3">
+                        <div class="step-number">3</div>
+                        <span>Clarification</span>
+                    </div>
+                    <div class="step" id="step4">
+                        <div class="step-number">4</div>
+                        <span>Generate Diagram</span>
+                    </div>
+                </div>
+
+                <!-- Initial Input Section -->
+                <div id="inputSection" class="input-section">
+                    <div class="form-group">
+                        <label for="userInput">
+                            <i class="fas fa-edit"></i> Describe your business process or workflow:
+                        </label>
+                        <textarea 
+                            id="userInput" 
+                            class="form-control" 
+                            placeholder="Example: When a sales representative creates a new opportunity with an amount greater than $100,000, the system should automatically send an email notification to the regional sales manager and create an approval record..."
+                        ></textarea>
+                    </div>
+                    
+                    <!-- Preset Examples Section -->
+                    <div class="preset-examples">
+                        <h4 style="margin: 20px 0 15px 0; color: #374151; font-size: 1.1rem;">
+                            <i class="fas fa-lightbulb"></i> Try these examples:
+                        </h4>
+                        <div class="preset-buttons">
+                            <button class="btn btn-secondary preset-btn" data-preset="goldenfoods">
+                                <i class="fas fa-dog"></i> GoldenFoods Pet Supply
+                            </button>
+                            <button class="btn btn-secondary preset-btn" data-preset="techstartup">
+                                <i class="fas fa-rocket"></i> Tech Startup CRM
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <button id="analyzeBtn" class="btn">
+                        <i class="fas fa-play"></i> Start Analysis
+                    </button>
+                </div>
+
+                <!-- Loading Section -->
+                <div id="loadingSection" class="loading">
+                    <div class="spinner"></div>
+                    <p>Analyzing your requirements and generating user story...</p>
+                </div>
+
+                <!-- Results Section -->
+                <div id="resultsSection" class="result-section">
+                    <!-- User Story Display -->
+                    <div id="userStorySection" class="user-story-card hidden">
+                        <h3><i class="fas fa-book-open"></i> Generated User Story</h3>
+                        <div id="userStoryContent" class="user-story-content"></div>
+                    </div>
+
+                    <!-- Questions Section -->
+                    <div id="questionsSection" class="questions-section hidden">
+                        <h3><i class="fas fa-question-circle"></i> Clarification Questions</h3>
+                        <p>Please answer the following questions to help us better understand your process:</p>
+                        <div id="questionsList"></div>
+                        <button id="submitAnswersBtn" class="btn">
+                            <i class="fas fa-paper-plane"></i> Submit Answers
+                        </button>
+                    </div>
+
+                    <!-- Diagram Section -->
+                    <div id="diagramSection" class="diagram-section hidden">
+                        <h3><i class="fas fa-chart-network"></i> Workflow Diagram</h3>
+                        <div id="diagramContainer" class="diagram-container">
+                            <div id="mermaidDiagram" class="mermaid"></div>
+                        </div>
+                    </div>
+
+                    <!-- Technical Specification Section -->
+                    <div id="techSpecSection" class="tech-spec-section hidden">
+                        <h3><i class="fas fa-cogs"></i> Technical Specification</h3>
+                        <div id="techSpecContent" class="tech-spec-content"></div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div id="actionButtons" class="hidden" style="text-align: center; margin-top: 30px;">
+                        <button id="generateDiagramBtn" class="btn">
+                            <i class="fas fa-magic"></i> Generate Diagram
+                        </button>
+                        <button id="newAnalysisBtn" class="btn btn-secondary">
+                            <i class="fas fa-plus"></i> Start New Analysis
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+
+    <script src="static/app.js"></script>
+</body>
+</html> 

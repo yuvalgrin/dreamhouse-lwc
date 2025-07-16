@@ -1,0 +1,86 @@
+{
+  "upn_diagram": {
+    "steps": [
+      {
+        "id": "A",
+        "type": "Record Event",
+        "label": "New Lead Created",
+        "actor": "System",
+        "system": "Salesforce",
+        "next_step_ids": ["B"]
+      },
+      {
+        "id": "B",
+        "type": "Do",
+        "label": "Create Tasks for Opportunity",
+        "actor": "System",
+        "system": "Salesforce",
+        "next_step_ids": ["C"]
+      },
+      {
+        "id": "C",
+        "type": "Wait",
+        "label": "Wait 3 Days to Send Sample Pack",
+        "actor": "System",
+        "system": "Salesforce",
+        "next_step_ids": ["D"]
+      },
+      {
+        "id": "D",
+        "type": "Do",
+        "label": "Send Sample Pack",
+        "actor": "System",
+        "system": "Salesforce",
+        "next_step_ids": ["E"]
+      },
+      {
+        "id": "E",
+        "type": "Wait",
+        "label": "Wait 10 Days to Schedule Pricing Call",
+        "actor": "System",
+        "system": "Salesforce",
+        "next_step_ids": ["F"]
+      },
+      {
+        "id": "F",
+        "type": "Do",
+        "label": "Schedule Pricing Call",
+        "actor": "System",
+        "system": "Salesforce",
+        "next_step_ids": ["G"]
+      },
+      {
+        "id": "G",
+        "type": "Check",
+        "label": "Is Discount Above 15%?",
+        "actor": "System",
+        "system": "Salesforce",
+        "condition": "Opportunity.Discount > 15%",
+        "next_step_ids": ["H", "I"]
+      },
+      {
+        "id": "H",
+        "type": "Notify",
+        "label": "Notify Manager for Approval",
+        "actor": "System",
+        "system": "Salesforce",
+        "next_step_ids": ["J"]
+      },
+      {
+        "id": "I",
+        "type": "Do",
+        "label": "Log Email Replies",
+        "actor": "System",
+        "system": "Salesforce",
+        "next_step_ids": ["J"]
+      },
+      {
+        "id": "J",
+        "type": "End",
+        "label": "End Process",
+        "actor": "System",
+        "system": "Salesforce"
+      }
+    ]
+  }
+}
